@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{block.super}}
+{% endblock title %}
+
+{% load static %}
+
+{% block content %}
+    {% for file in folders %}
+        <a class="lead px-5 py-4" href="{{file.url}}" >{{file|cut:"E:\\android\Ja\\"|cut:"_AsianToLick_com"}}</a>
+    {% endfor %}
+{% endblock content %}
