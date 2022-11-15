@@ -23,7 +23,17 @@ import debug_toolbar
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Admin app URLS
+    path(
+        'admin/',
+        admin.site.urls
+    ),
+    
+    # Web_rtc app URLS
+    path(
+        '',
+        include('web_rtc.urls')
+    ),
 ]
 
 if settings.DEBUG:
