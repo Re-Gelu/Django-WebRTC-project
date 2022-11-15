@@ -1,2 +1,6 @@
 Django==4.0.8
 psycopg2-binary==2.8.6
+redis
+channels["daphne"]
+channels_redis
+django-debug-toolbar
