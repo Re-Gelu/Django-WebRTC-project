@@ -7,7 +7,32 @@
 {% load static %}
 
 {% block content %}
-    {% for file in folders %}
-        <a class="lead px-5 py-4" href="{{file.url}}" >{{file|cut:"E:\\android\Ja\\"|cut:"_AsianToLick_com"}}</a>
-    {% endfor %}
+    <div class="container mt-3">
+        <div class=" a-important lead">Input the name of the room to connect</div>
+        <div class="row col-4">
+            <div class="input-group my-3">
+                <button id="room-name-submit" class="btn btn-outline-success" type="button">Connect</button>
+                <input id="room-name-input" type="text" class="form-control" placeholder="Room name" aria-label="Room name" aria-describedby="room-name-submit" size="100">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            if (roomName) {
+                window.location.pathname = '/chat/' + roomName + '/';
+            }
+            else {
+                alert("Input room name please!")
+            }
+        };
+    </script>
 {% endblock content %}
