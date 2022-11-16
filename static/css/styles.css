@@ -54,19 +54,19 @@
 	:root {
 		--body-background-color: white;
 		--header-background-color: rgba(255, 255, 255, 94%);
-		--shadow-color: rgba(220, 20, 60, 0.5);
+		--shadow-color: rgba(48,48,48, 0.5);
 		--wrapper-background-color: white;
 		--footer-background-color: rgb(226, 226, 226);
-		--main-color: #dc143c;
+		--main-color: #505050;
 		--color-1: black;
 		--color-2: white;
 		--color-3: #444;
-		--second-main-color: #dc143c;
-		--second-main-color-o: rgba(220, 20, 60, 0.9);
+		--second-main-color: #686868;
+		--second-main-color-o: rgba(48,48,48, 0.9);
 		--color-5: rgb(226, 226, 226);
 		--logo-color: #444;
 		--a-text: #444;
-		--a-text-active: crimson;
+		--a-text-active: rgb(80,80,80);;
 		--border-color: #444;
 	}
 
