@@ -17,8 +17,10 @@
     </div>
 
     <script>
+        // Get room name
         const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
+        // Create WebSocket
         const chatSocket = new WebSocket(
             'ws://'
             + window.location.host
@@ -27,11 +29,13 @@
             + '/'
         );
 
+        // Action when room in layer get a message
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             document.querySelector('#chat-log').value += (data.message + '\n');
         };
 
+        // WebSocket error handler
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
@@ -43,6 +47,7 @@
             }
         };
 
+        // Submit actions (send user message on server)
         document.querySelector('#chat-message-submit').onclick = function(e) {
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
