@@ -17,5 +17,5 @@ class RoomTemplateView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["room_name"] = mark_safe(json.dumps(kwargs.get('room_name')))
+        context["room_name"] = kwargs.get('room_name')
         return context
