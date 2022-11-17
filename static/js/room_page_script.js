@@ -14,7 +14,8 @@ const chatSocket = new WebSocket(
 chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     console.log(`Message recieved: ${data.message}`)
-    document.querySelector('#chat-log').value += (data.message + '\n');
+    console.log(data)
+    document.querySelector('#chat-log').value += (`${data.username}: ${data.message}\n`);
 
 };
 
