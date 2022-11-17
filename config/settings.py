@@ -89,16 +89,10 @@ ASGI_APPLICATION = "config.asgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.db.backends.sqlite3",
         "NAME": "django_webrtc_project_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "",
-        "PORT": "5432",
-        'TEST': {
-            "ENGINE": "django.db.backends.sqlite3",
-            'NAME': 'db_test.sqlite3'
-        }
     }
 }
 

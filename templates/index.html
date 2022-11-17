@@ -9,10 +9,15 @@
 {% block content %}
     <div class="container mt-3">
         <div class=" a-important lead">Input the name of the room to connect</div>
+        <div class="row col-6 col-md-4 mt-3">
+            <div class="input-group">
+                <input id="user-name-input" class="form-control" type="text" placeholder="username" aria-label="username">
+            </div>
+        </div>
         <div class="row col-4">
-            <div class="input-group my-3">
+            <div class="input-group mt-3">
                 <button id="room-name-submit" class="btn btn-outline-success" type="button">Connect</button>
-                <input id="room-name-input" type="text" class="form-control" placeholder="Room name" aria-label="Room name" aria-describedby="room-name-submit" size="100">
+                <input id="room-name-input" type="text" class="form-control" placeholder="room name" aria-label="Room name" aria-describedby="room-name-submit" size="100">
             </div>
         </div>
     </div>

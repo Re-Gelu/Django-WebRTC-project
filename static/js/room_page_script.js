@@ -10,11 +10,15 @@ const chatSocket = new WebSocket(
     + '/'
 );
 
+// WebSocket open status handler
+chatSocket.onopen = function(e) {
+    console.log('Chat socket opened successfully')
+}
+
 // Action when room in layer get a message
 chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    console.log(`Message recieved: ${data.message}`)
-    console.log(data)
+    console.log(`Message: ${data.message} recieved from ${data.username}`)
     document.querySelector('#chat-log').value += (`${data.username}: ${data.message}\n`);
 
 };
@@ -37,7 +41,8 @@ document.querySelector('#chat-message-submit').onclick = function(e) {
     const message = messageInputDom.value;
     console.log(`Message sent: ${message}`)
     chatSocket.send(JSON.stringify({
-        'message': message
+        'message': message,
+        'username': localStorage.getItem('username'),
     }));
     messageInputDom.value = '';
 };
