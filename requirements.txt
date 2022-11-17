@@ -4,3 +4,6 @@ redis
 channels["daphne"]
 channels_redis
 django-debug-toolbar
+django-admin-interface==0.20.0
+django-extra-settings==0.6.1
+selenium 
