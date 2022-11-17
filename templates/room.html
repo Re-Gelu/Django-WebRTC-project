@@ -8,53 +8,39 @@
 
 {% block content %}
     <div class="container mt-3">
-        <textarea id="chat-log" cols="100" rows="20" class="form-control" readonly></textarea><br>
+        <div class="row">
 
-        <input id="chat-message-input" type="text" class="form-control" size="100"><br>
-        <input id="chat-message-submit" type="button" class="btn btn-dark" value="Send">
+            <!-- Video chat -->
+            <div class="col-8 row">
 
-        {{ room_name|json_script:"room-name" }}
+                <!-- localVideo -->
+                <div class="col-6">
+                    <video id="localVideo" autoplay playsinline></video>
+
+                    <div class="col-6 mt-3">
+						<button class="btn btn-primary btn-sm" id="startButton">Start</button>
+						<button class="btn btn-success btn-sm" id="callButton">Call</button>
+						<button class="btn btn-danger btn-sm" id="hangupButton">Hang Up</button>
+					</div>
+                </div>
+
+                <!-- remoteVideo -->
+                <div class="col-6">
+                    <video id="remoteVideo" autoplay playsinline class="col-12"></video>
+                </div>
+            </div>
+
+            <!-- Text chat -->
+            <div class="col-4">
+                <textarea id="chat-log" cols="100" rows="20" class="form-control" readonly></textarea><br>
+
+                <input id="chat-message-input" type="text" class="form-control" size="100"><br>
+                <input id="chat-message-submit" type="button" class="btn btn-dark" value="Send">
+            </div>
+        </div>
     </div>
 
-    <script>
-        // Get room name
-        const roomName = JSON.parse(document.getElementById('room-name').textContent);
-
-        // Create WebSocket
-        const chatSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/start/'
-            + roomName
-            + '/'
-        );
-
-        // Action when room in layer get a message
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
-        };
-
-        // WebSocket error handler
-        chatSocket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
-        };
-
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter
-                document.querySelector('#chat-message-submit').click();
-            }
-        };
-
-        // Submit actions (send user message on server)
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
+    {{ room_name|json_script:"room-name" }}
+    <script src="{% static 'js/room_page_script.js' %}"></script>
+    <script src="{% static 'js/cam_script.js' %}"></script>
 {% endblock content %}
