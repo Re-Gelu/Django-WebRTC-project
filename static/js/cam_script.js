@@ -16,8 +16,19 @@ const offerOptions = {
 let startTime = null;
 
 // Define peer connections, streams and video elements.
-const localVideo = document.getElementById('localVideo');
-const remoteVideo = document.getElementById('remoteVideo');
+const localVideo =  document.createElement('video');
+localVideo.setAttribute('id', 'localVideo');
+localVideo.setAttribute('autoplay', '');
+localVideo.setAttribute('playsinline', '');
+localVideo.setAttribute('uk-video', '');
+localVideo.setAttribute('class', 'rounded-3');
+
+const remoteVideo = document.createElement('video');
+remoteVideo.setAttribute('id', 'remoteVideo');
+remoteVideo.setAttribute('autoplay', '');
+remoteVideo.setAttribute('playsinline', '');
+remoteVideo.setAttribute('uk-video', '');
+remoteVideo.setAttribute('class', 'rounded-3 col-12');
 
 let localStream;
 let remoteStream;
@@ -25,11 +36,11 @@ let remoteStream;
 let localPeerConnection;
 let remotePeerConnection;
 
-
 // Define MediaStreams callbacks.
 
 // Sets the MediaStream as the video element src.
 function gotLocalMediaStream(mediaStream) {
+    document.querySelector('#localVideoPlaceholder').replaceWith(localVideo);
     localVideo.srcObject = mediaStream;
     localStream = mediaStream;
     trace('Received local stream.');
@@ -43,6 +54,7 @@ function handleLocalMediaStreamError(error) {
 
 // Handles remote MediaStream success by adding it as the remoteVideo src.
 function gotRemoteMediaStream(event) {
+    document.querySelector('#remoteVideoPlaceholder').replaceWith(remoteVideo);
     const mediaStream = event.stream;
     remoteVideo.srcObject = mediaStream;
     remoteStream = mediaStream;
