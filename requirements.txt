@@ -1,7 +1,7 @@
 Django==4.0.8
 psycopg2-binary==2.8.6
 redis
-channels["daphne"]
+channels[daphne]
 channels_redis
 django-debug-toolbar
 django-admin-interface==0.20.0
