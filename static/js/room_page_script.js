@@ -1,9 +1,18 @@
 // Get room name
 const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
+var websocketProtocol;
+
+if (location.protocol === 'http:') {
+    websocketProtocol = 'ws';
+} else {
+    websocketProtocol = 'wss';
+}
+
 // Create WebSocket
 const chatSocket = new WebSocket(
-    'ws://'
+    websocketProtocol
+    + '://'
     + window.location.host
     + '/ws/start/'
     + roomName

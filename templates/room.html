@@ -21,7 +21,9 @@
                             <span class="placeholder col-12 h-100"></span>
                         </div>
                         <!-- <video id="localVideo" autoplay playsinline uk-video class="rounded-3"></video> -->
-
+                        <p class="col-9 mt-3">
+                            <div class="mb-2 lead">Video: </div><select id="camera-select-input" class="form-select form-select-sm"></select>
+                        </p>
                         <p class="mt-3">
                             <button class="btn btn-primary border-dark" id="startButton">
                                 <i class="bi bi-webcam fs-4"></i>
@@ -57,5 +59,5 @@
 
     {{ room_name|json_script:"room-name" }}
     <script src="{% static 'js/room_page_script.js' %}"></script>
-    <script src="{% static 'js/cam_script.js' %}"></script>
+    <script src="{% static 'js/test_cam_script.js' %}"></script>
 {% endblock content %}

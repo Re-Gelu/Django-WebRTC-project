@@ -7,4 +7,8 @@ websocket_urlpatterns = [
         'ws/start/<str:room_name>/', 
         consumers.ChatConsumer.as_asgi()
     ),
+    path(
+        'ws/video_call/signal/', 
+        consumers.VideoCallSignalConsumer.as_asgi()
+    ),
 ]
