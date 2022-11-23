@@ -52,8 +52,6 @@ function trace(text) {
 
 
 // Get cameras list
-getCameras()
-
 function getCameras() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
         trace("enumerateDevices() not supported.");
@@ -78,7 +76,70 @@ function getCameras() {
         })
         .catch(function (err) {
             trace(err.name + ": " + err.message);
-        });
+        }
+    );
+}
+
+getCameras()
+
+
+
+/* DEFINE VIDEO SIGNAL WEBSOCKET BEHAVIOR. */
+
+// Create WebSocket for video connection
+const videoSignalSocket = new WebSocket(
+    websocketProtocol
+    + '://'
+    + window.location.host
+    + '/ws/video_call/'
+    + roomName
+    + '/'
+);
+
+// WebSocket open status handler
+videoSignalSocket.onopen = function(e) {
+    console.log('Video signal socket opened successfully')
+}
+
+// WebSocket error handler
+videoSignalSocket.onclose = function(e) {
+    console.error('Video signal socket closed unexpectedly');
+};
+
+function startSignaling() {
+    trace('start signaling');
+    rtcPeerConn = new RTCPeerConnection(configuration);
+
+    // send any ice candidates to other peer
+    rtcPeerConn.onicecandidate = function (evt) {
+        if (evt.candidate) {
+            videoSignalSocket.send(JSON.stringify({
+                'type': 'ice candidate',
+                'message': JSON.stringify({
+                    'candidate': evt.candidate
+                }),
+                'room': roomName
+            }));
+        }
+        trace('completed that ice candidate...');
+    }
+
+    // when we receive an offer, we return our offer
+    // let the 'negotiationneeded' event trigger offer generation
+    rtcPeerConn.onnegotiationneeded = function () {
+        trace('on negotiation called');
+        rtcPeerConn.createOffer(sendLocalDesc, logError);
+    }
+
+    // once remote stream arrives, show it in remote video element
+    rtcPeerConn.onaddstream = function (evt) {
+        displaySignalMessage('going to add their stream...');
+        theirVideoArea.srcObject = evt.stream;
+    }
+
+    // get a local stream, show it in our video tag and add it to be sent
+    startStream();
+
 }
 
 
@@ -87,7 +148,12 @@ function getCameras() {
 
 // Sets the MediaStream as the video element src.
 function gotLocalMediaStream(mediaStream) {
-    document.querySelector('#localVideoPlaceholder').replaceWith(localVideo);
+    if (document.querySelector('#localVideoPlaceholder') != null){
+        document.querySelector('#localVideoPlaceholder').replaceWith(localVideo);
+    }
+    else{
+        document.querySelector('#localVideo').replaceWith(localVideo);
+    }
     localVideo.srcObject = mediaStream;
     localStream = mediaStream;
     trace('Received local stream.');
@@ -149,12 +215,29 @@ hangupButton.disabled = true;
 
 
 // Handles start button action: creates local MediaStream.
+function startStream() {
+    trace('Requesting local stream.');
+    if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
+        const updatedMediaStreamConstraints = {
+            ...mediaStreamConstraints,
+            deviceId: {
+                exact: cameraSelect.value
+            }
+        };
+        navigator.mediaDevices.getUserMedia(updatedMediaStreamConstraints)
+            .then(gotLocalMediaStream).catch(handleLocalMediaStreamError);
+    }
+    else{
+        trace('No supported devices!')
+    }
+}
+
 function startAction() {
     startButton.disabled = true;
-    navigator.mediaDevices.getUserMedia(mediaStreamConstraints)
-        .then(gotLocalMediaStream).catch(handleLocalMediaStreamError);
-    trace('Requesting local stream.');
+    startStream()
 }
+
+cameraSelect.onchange = () => {startStream();}
 
 // Handles call button action: creates peer connection.
 function callAction() {

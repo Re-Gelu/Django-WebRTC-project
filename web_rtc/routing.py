@@ -4,11 +4,11 @@ from . import consumers
 
 websocket_urlpatterns = [
     path(
-        'ws/start/<str:room_name>/', 
+        'ws/chat/<str:room_name>/', 
         consumers.ChatConsumer.as_asgi()
     ),
     path(
-        'ws/video_call/signal/', 
+        'ws/video_call/<str:room_name>/',
         consumers.VideoCallSignalConsumer.as_asgi()
     ),
 ]
