@@ -42,7 +42,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     async def chat_message(self, event):
         # Receive message from room group
-        message = event["message"]
+        message = event.get('message')
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
@@ -55,7 +55,7 @@ class VideoCallSignalConsumer(AsyncWebsocketConsumer):
     
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        self.room_group_name = f"chat_{self.room_name}"
+        self.room_group_name = f"video_chat_{self.room_name}"
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -73,9 +73,9 @@ class VideoCallSignalConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_send(
             self.room_group_name, {
-                'type': 'signal_message',
-                'data': text_data_json,
-                'sender_channel_name': self.channel_name
+                "type": "signal_message",
+                "data": text_data_json,
+                "sender_channel_name": self.channel_name
             }
         )
 
@@ -86,8 +86,8 @@ class VideoCallSignalConsumer(AsyncWebsocketConsumer):
         if 2 users (each user has a unique channel_name) in a group,
         this func will be called 2 times.
         """
-        data = event['data']
-
+        data = event.get('data')
+        
         # Send message to all channels except parent channel
         if self.channel_name != event.get('sender_channel_name'):
             await self.send(text_data=json.dumps({

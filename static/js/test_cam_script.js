@@ -19,6 +19,8 @@ var configuration = {
     }]
 };
 
+var rtcPeerConn;
+
 // Define initial start time of the call (defined as connection between peers).
 let startTime = null;
 
@@ -106,6 +108,53 @@ videoSignalSocket.onclose = function(e) {
     console.error('Video signal socket closed unexpectedly');
 };
 
+videoSignalSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    trace(`Signal received: ${data.type}`)
+
+    // setup RTC peer connection object
+    if (!rtcPeerConn) {
+        trace('rtc Peer conn doesnt exists yet');
+        startSignaling();
+    }
+
+    // sending some bogus signal on load with type='user_here'. we call below code only for real signal message
+    if (data.type != 'user_here') {
+        console.log('data type != user_here');
+        var message = JSON.parse(data.message);
+
+        // sdp message means remote party made us an offer
+        if (message.sdp) {
+            rtcPeerConn.setRemoteDescription(
+                new RTCSessionDescription(message.sdp), function () {
+                    // if we received an offer, we need to answer
+                    if (rtcPeerConn.remoteDescription.type == 'offer') {
+                        rtcPeerConn.createAnswer(sendLocalDesc, logError);
+                    }
+                }, trace('message.sdp error'));
+        } else {
+            rtcPeerConn.addIceCandidate(new RTCIceCandidate(message.candidate));
+        }
+    }
+}
+
+// send ready state signal
+// this one also should only be told to other user, not both user
+var videoSignalSocketReady = setInterval(function () {
+    // keep checking if socket is ready at certain intervals
+    // once ready, send a signal and exit loop
+    trace(`ready state=${videoSignalSocket.readyState}`);
+    if (videoSignalSocket.readyState === 1) {
+        videoSignalSocket.send(JSON.stringify({
+            'type': 'user_here',
+            'message': 'Are you ready for a call?',
+            'room': roomName
+        }));
+        clearInterval(videoSignalSocketReady);
+    }
+
+}, 1000);
+
 function startSignaling() {
     trace('start signaling');
     rtcPeerConn = new RTCPeerConnection(configuration);
@@ -128,18 +177,30 @@ function startSignaling() {
     // let the 'negotiationneeded' event trigger offer generation
     rtcPeerConn.onnegotiationneeded = function () {
         trace('on negotiation called');
-        rtcPeerConn.createOffer(sendLocalDesc, logError);
+        rtcPeerConn.createOffer(sendLocalDesc, trace('on negotiation called error'));
     }
 
     // once remote stream arrives, show it in remote video element
     rtcPeerConn.onaddstream = function (evt) {
-        displaySignalMessage('going to add their stream...');
-        theirVideoArea.srcObject = evt.stream;
+        trace('going to add their stream...');
+        gotRemoteMediaStream(evt);
     }
 
     // get a local stream, show it in our video tag and add it to be sent
     startStream();
+}
 
+function sendLocalDesc(desc) {
+    rtcPeerConn.setLocalDescription(desc, function () {
+        trace('sending local description');
+        videoSignalSocket.send(JSON.stringify({
+            'type': 'SDP',
+            'message': JSON.stringify({
+                'sdp': rtcPeerConn.localDescription
+            }),
+            'room': roomName
+        }));
+    }, trace('sending local description error'));
 }
 
 
