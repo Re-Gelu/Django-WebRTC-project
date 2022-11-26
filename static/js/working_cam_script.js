@@ -1,21 +1,16 @@
 // Frontend io we have { io.on as input, io.emit as op)
-let width = 250;
-let height = 250;
+let width = 1920;
+let height = 1080;
 var myVideoArea = document.querySelector('#localVideo');
 var theirVideoArea = document.querySelector('#remoteVideo');
 
 var cameraSelect = document.querySelector('#camera-select-input');
 var devices = navigator.mediaDevices.enumerateDevices();
 
-/* var canvas = document.querySelector('#idCanvas');
-var profileImage = document.querySelector('#idImage');
-var takePicButton = document.querySelector('#idTakePictureBtn'); */
-
 var myName = document.querySelector('#idMyName');
 var myMessage = document.querySelector('#chat-message-input');
 var sendMessage = document.querySelector('#chat-message-submit');
 var chatArea = document.querySelector('#chat-log');
-var ROOM = "chat";
 var SIGNAL_ROOM = 'SIGNAL_ROOM';
 
 var websocketProtocol;
@@ -35,14 +30,10 @@ var configuration = {
         'url': 'stun:stun1.l.google.com:19302' //'stun:stun.l.google.com:19302'
     }]
 };
+
 var rtcPeerConn;
 
 var signalingArea = document.querySelector('#idSignalingArea');
-
-/* takePicButton.addEventListener('click', function () {
-    console.log('take picture');
-    takeProfilePic();
-}); */
 
 getCameras();
 
@@ -212,15 +203,3 @@ function getCameras() {
             console.log(err.name + ": " + err.message);
         });
 }
-
-
-/* function takeProfilePic() {
-    var context = canvas.getContext('2d');
-
-    canvas.width = width;
-    canvas.height = height;
-    context.drawImage(myVideoArea, 0, 0, width, height);
-
-    var data = canvas.toDataURL('image/png');
-    profileImage.setAttribute('src', data);
-} */
