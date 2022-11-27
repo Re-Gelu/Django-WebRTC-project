@@ -7,6 +7,9 @@ let height = 1080;
 var localVideoPlaceholder = document.querySelector('#localVideoPlaceholder');
 var remoteVideoPlaceholder = document.querySelector('#remoteVideoPlaceholder');
 
+var localVideoPlaceholderHTML = localVideoPlaceholder.cloneNode(true);
+var remoteVideoPlaceholderHTML = remoteVideoPlaceholder.cloneNode(true);
+
 const localVideo =  document.createElement('video');
 localVideo.setAttribute('id', 'localVideo');
 localVideo.setAttribute('autoplay', '');
@@ -125,17 +128,16 @@ var videoSignalSocketReady = setInterval(function () {
 }, 1000);
 
 function startSignaling() {
-    console.log('startSignaling');
-    console.log('starting signaling...');
+    console.log('start signaling...');
     rtcPeerConn = new RTCPeerConnection(configuration);
 
     // send any ice candidates to other peer
-    rtcPeerConn.onicecandidate = function (evt) {
-        if (evt.candidate) {
+    rtcPeerConn.onicecandidate = function (event) {
+        if (event.candidate) {
             videoSignalSocket.send(JSON.stringify({
                 'type': 'ice candidate',
                 'message': JSON.stringify({
-                    'candidate': evt.candidate
+                    'candidate': event.candidate
                 }),
                 'room': SIGNAL_ROOM
             }));
@@ -144,25 +146,29 @@ function startSignaling() {
     }
 
     rtcPeerConn.onnegotiationneeded = function () {
-        console.log(' on negotiation called');
+        console.log('on negotiation called');
         rtcPeerConn.createOffer(sendLocalDesc, logError);
     }
 
-    rtcPeerConn.onaddstream = function (evt) {
-        console.log('going to add their stream...');
+    rtcPeerConn.onaddstream = function (event) {
+        console.log('going to add remote stream...');
         if (remoteVideoPlaceholder != null){
             remoteVideoPlaceholder.replaceWith(remoteVideo);
         }
         else{
             remoteVideo.replaceWith(remoteVideo);
         }
-        remoteVideo.srcObject = evt.stream;
+        remoteVideo.srcObject = event.stream;
+    }
+
+    rtcPeerConn.onclose  = function () {
+        console.log('RTCpeer connection closed');
     }
 
     //startStream();
 
 }
-// new
+
 function startStream() {
     console.log('Requesting local stream');
     const updatedConstraints = {
@@ -181,13 +187,13 @@ function startStream() {
                 localVideo.replaceWith(localVideo);
             }
             localVideo.srcObject = stream;
-            rtcPeerConn.addStream(stream);
+            //rtcPeerConn.addStream(stream);
         })
         .catch(function (error) {
-            console.log('Error in stream:', error);
+            console.log('Error in local stream:', error);
         });
+    callButton.disabled = false;
 }
-
 
 function sendLocalDesc(desc) {
     rtcPeerConn.setLocalDescription(desc, function () {
@@ -216,8 +222,7 @@ function getCameras() {
     navigator.mediaDevices.enumerateDevices()
         .then(function (devices) {
             devices.forEach(function (device) {
-                console.log(device.kind + ": " + device.label +
-                    " id = " + device.deviceId);
+                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
 
                 // add different camera options to a select tag
                 if (device.kind === 'videoinput') {
@@ -244,31 +249,43 @@ hangupButton.disabled = true;
 
 function startAction() {
     startButton.disabled = true;
-    startStream()
+    startStream();
 }
 
 function callAction() {
-    callButton.disabled = true;
-    hangupButton.disabled = false;
+    var isConnectionSuccess = false;
+    console.log('Starting call...');
 
-    trace('Starting call.');
-    startTime = window.performance.now();
-    
-    // Get local media stream tracks.
-    const videoTracks = localStream.getVideoTracks();
-    const audioTracks = localStream.getAudioTracks();
-    if (videoTracks.length > 0) {
-        trace(`Using video device: ${videoTracks[0].label}.`);
+    try{
+        console.log('Adding local stream...');
+        rtcPeerConn.addStream(localVideo.srcObject);
+        isConnectionSuccess = true;
+        console.log('Connection succeeded!');
     }
-    if (audioTracks.length > 0) {
-        trace(`Using audio device: ${audioTracks[0].label}.`);
+    catch (error) {
+        console.log("Something went wrong. Info: " + error)
+        alert("Something went wrong...")
     }
+
+    if (isConnectionSuccess) {
+        callButton.disabled = true;
+        hangupButton.disabled = false;
+    }
+}
+
+function hangupAction() {
+    console.log('Ending call...');
+    callButton.disabled = false;
+    hangupButton.disabled = true;
+    rtcPeerConn.close();
+    rtcPeerConn = null;
+    remoteVideo.replaceWith(remoteVideoPlaceholderHTML);
 }
 
 // Add click event handlers for buttons.
 startButton.addEventListener('click', startAction);
 callButton.addEventListener('click', callAction);
-//hangupButton.addEventListener('click', hangupAction);
+hangupButton.addEventListener('click', hangupAction);
     
 
 /* const foo = () => {}; */
