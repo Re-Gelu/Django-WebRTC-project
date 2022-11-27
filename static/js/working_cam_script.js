@@ -173,9 +173,9 @@ function startStream() {
     console.log('Requesting local stream');
     const updatedConstraints = {
             ...constraints,
-            /* deviceId: {
+            deviceId: {
                 exact: cameraSelect.value
-            } */
+            }
         };
     navigator.mediaDevices.getUserMedia(updatedConstraints)
         .then(function (stream) {
