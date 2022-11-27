@@ -88,7 +88,7 @@ ASGI_APPLICATION = "config.asgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    "sqlite3": {
+    "postgres": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "django_webrtc_project_db",
         "USER": "postgres",
