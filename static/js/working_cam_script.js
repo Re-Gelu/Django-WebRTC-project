@@ -1,21 +1,49 @@
+'use strict';
+
 // Frontend io we have { io.on as input, io.emit as op)
 let width = 1920;
 let height = 1080;
-var myVideoArea = document.querySelector('#localVideo');
-var theirVideoArea = document.querySelector('#remoteVideo');
+
+var localVideoPlaceholder = document.querySelector('#localVideoPlaceholder');
+var remoteVideoPlaceholder = document.querySelector('#remoteVideoPlaceholder');
+
+const localVideo =  document.createElement('video');
+localVideo.setAttribute('id', 'localVideo');
+localVideo.setAttribute('autoplay', '');
+localVideo.setAttribute('playsinline', '');
+localVideo.setAttribute('uk-video', '');
+localVideo.setAttribute('class', 'rounded-3');
+
+const remoteVideo = document.createElement('video');
+remoteVideo.setAttribute('id', 'remoteVideo');
+remoteVideo.setAttribute('autoplay', '');
+remoteVideo.setAttribute('playsinline', '');
+remoteVideo.setAttribute('uk-video', '');
+remoteVideo.setAttribute('class', 'rounded-3 col-12');
+
+// Define action buttons.
+const startButton = document.getElementById('startButton');
+const callButton = document.getElementById('callButton');
+const hangupButton = document.getElementById('hangupButton');
 
 var cameraSelect = document.querySelector('#camera-select-input');
 var devices = navigator.mediaDevices.enumerateDevices();
 
-var myName = document.querySelector('#idMyName');
-var myMessage = document.querySelector('#chat-message-input');
-var sendMessage = document.querySelector('#chat-message-submit');
-var chatArea = document.querySelector('#chat-log');
 var SIGNAL_ROOM = 'SIGNAL_ROOM';
 
+const constraints = {
+    video: true/* {
+        width: width,
+        height: height,
+    } */,
+    audio: false
+};
+
 var websocketProtocol;
+
 console.log('host = ', window.location.host);
 console.log('protocol=', location.protocol);
+
 if (location.protocol === 'http:') {
     websocketProtocol = 'ws';
 } else {
@@ -33,8 +61,6 @@ var configuration = {
 
 var rtcPeerConn;
 
-var signalingArea = document.querySelector('#idSignalingArea');
-
 getCameras();
 
 // WebSocket -> .send, .onmessage, .onclose
@@ -47,7 +73,7 @@ const videoSignalSocket = new WebSocket(
 videoSignalSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
 
-    displaySignalMessage('Signal received:' + data.type);
+    console.log('Signal received:' + data.type);
 
     // setup RTC peer connection object
     if (!rtcPeerConn) {
@@ -98,13 +124,9 @@ var videoSignalSocketReady = setInterval(function () {
 
 }, 1000);
 
-function displaySignalMessage(message) {
-    console.log(message);
-}
-
 function startSignaling() {
     console.log('startSignaling');
-    displaySignalMessage('starting signaling...');
+    console.log('starting signaling...');
     rtcPeerConn = new RTCPeerConnection(configuration);
 
     // send any ice candidates to other peer
@@ -118,50 +140,58 @@ function startSignaling() {
                 'room': SIGNAL_ROOM
             }));
         }
-        displaySignalMessage('completed that ice candidate...');
+        console.log('completed that ice candidate...');
     }
 
-    // when we receive an offer, we return our offer
-    // let the 'negotiationneeded' event trigger offer generation
     rtcPeerConn.onnegotiationneeded = function () {
-        displaySignalMessage(' on negotiation called');
+        console.log(' on negotiation called');
         rtcPeerConn.createOffer(sendLocalDesc, logError);
     }
 
-    // once remote stream arrives, show it in remote video element
     rtcPeerConn.onaddstream = function (evt) {
-        displaySignalMessage('going to add their stream...');
-        theirVideoArea.srcObject = evt.stream;
+        console.log('going to add their stream...');
+        if (remoteVideoPlaceholder != null){
+            remoteVideoPlaceholder.replaceWith(remoteVideo);
+        }
+        else{
+            remoteVideo.replaceWith(remoteVideo);
+        }
+        remoteVideo.srcObject = evt.stream;
     }
 
-    // get a local stream, show it in our video tag and add it to be sent
-    startStream();
+    //startStream();
 
 }
-
 // new
 function startStream() {
-    console.log('startStream');
-    let constraints = {
-        video: {
-            width: width,
-            height: height,
-            deviceId: cameraSelect.value // if wrong device id, then it goes with default
-        },
-        audio: true
-    };
-    navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
-        console.log('Stream connected successfully');
-        myVideoArea.srcObject = stream;
-        rtcPeerConn.addStream(stream); // this triggers event our peer needs to get our stream
-    }).catch(function (error) {
-        console.log('error in stream:', error);
-    });
+    console.log('Requesting local stream');
+    const updatedConstraints = {
+            ...constraints,
+            /* deviceId: {
+                exact: cameraSelect.value
+            } */
+        };
+    navigator.mediaDevices.getUserMedia(updatedConstraints)
+        .then(function (stream) {
+            console.log('Stream connected successfully');
+            if (localVideoPlaceholder != null){
+                localVideoPlaceholder.replaceWith(localVideo);
+            }
+            else{
+                localVideo.replaceWith(localVideo);
+            }
+            localVideo.srcObject = stream;
+            rtcPeerConn.addStream(stream);
+        })
+        .catch(function (error) {
+            console.log('Error in stream:', error);
+        });
 }
+
 
 function sendLocalDesc(desc) {
     rtcPeerConn.setLocalDescription(desc, function () {
-        displaySignalMessage('sending local description');
+        console.log('sending local description');
         videoSignalSocket.send(JSON.stringify({
             'type': 'SDP',
             'message': JSON.stringify({
@@ -173,7 +203,7 @@ function sendLocalDesc(desc) {
 }
 
 function logError(error) {
-    displaySignalMessage(error.name + ':' + error.message);
+    console.log(error.name + ':' + error.message);
 }
 
 function getCameras() {
@@ -203,3 +233,42 @@ function getCameras() {
             console.log(err.name + ": " + err.message);
         });
 }
+
+
+
+/* DEFINE AND ADD BEHAVIOR TO BUTTONS. */
+
+// Set up initial action buttons status: disable call and hangup.
+callButton.disabled = true;
+hangupButton.disabled = true;
+
+function startAction() {
+    startButton.disabled = true;
+    startStream()
+}
+
+function callAction() {
+    callButton.disabled = true;
+    hangupButton.disabled = false;
+
+    trace('Starting call.');
+    startTime = window.performance.now();
+    
+    // Get local media stream tracks.
+    const videoTracks = localStream.getVideoTracks();
+    const audioTracks = localStream.getAudioTracks();
+    if (videoTracks.length > 0) {
+        trace(`Using video device: ${videoTracks[0].label}.`);
+    }
+    if (audioTracks.length > 0) {
+        trace(`Using audio device: ${audioTracks[0].label}.`);
+    }
+}
+
+// Add click event handlers for buttons.
+startButton.addEventListener('click', startAction);
+callButton.addEventListener('click', callAction);
+//hangupButton.addEventListener('click', hangupAction);
+    
+
+/* const foo = () => {}; */
