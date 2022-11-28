@@ -41,10 +41,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
     
     async def chat_message(self, event):
-        # Receive message from room group
         message = event.get('message')
-
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             "message": message,
             "username": event.get("username")
@@ -80,12 +77,6 @@ class VideoCallSignalConsumer(AsyncWebsocketConsumer):
         )
 
     async def signal_message(self, event):
-        """
-        its not called directly from UI websocket. Its called from
-        django receive() func.
-        if 2 users (each user has a unique channel_name) in a group,
-        this func will be called 2 times.
-        """
         data = event.get('data')
         
         # Send message to all channels except parent channel

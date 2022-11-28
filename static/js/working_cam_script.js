@@ -88,7 +88,7 @@ videoSignalSocket.onmessage = function (e) {
     // code only for real signal message
     if (data.type != 'user_here') {
         console.log('data type != user_here');
-        var message = JSON.parse(data.message); // parse json from message
+        var message = JSON.parse(data.message);
 
         // sdp message means remote party made us an offer
         if (message.sdp) {
