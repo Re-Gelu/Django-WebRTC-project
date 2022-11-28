@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,22 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:1337',
+    'http://localhost:8000',
+]
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+DJANGO_SECURE_SSL_REDIRECT = False
+
+DJANGO_SECURE_HSTS_SECONDS = 0
+
+DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+
+DJANGO_SECURE_HSTS_PRELOAD = False
 
 # Application definition
 
@@ -158,9 +175,41 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = ["127.0.0.1", ]
 
-# Redis settings
+# Prod settings
 
-REDIS_URL = 'redis://localhost:6379/0'
+if os.environ.get("DEBUG") == '0':
+
+    DEBUG = int(os.environ.get("DEBUG"))
+
+    ALLOWED_HOSTS = str(os.environ.get("DJANGO_ALLOWED_HOSTS")).split(" ")
+
+    CSRF_TRUSTED_ORIGINS = str(os.environ.get("CSRF_TRUSTED_ORIGINS")).split(" ")
+
+    INTERNAL_IPS = str(os.environ.get("INTERNAL_IPS")).split(" ")
+
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+
+    REDIS_URL = os.environ.get("REDIS_URL")
+
+    QIWI_PRIVATE_KEY = os.environ.get("QIWI_PRIVATE_KEY")
+
+    DATABASES = {
+        "default": {
+            "ENGINE": os.environ.get("SQL_ENGINE"),
+            "NAME": os.environ.get("SQL_DATABASE"),
+            "USER": os.environ.get("SQL_USER"),
+            "PASSWORD": os.environ.get("SQL_PASSWORD"),
+            "HOST": os.environ.get("SQL_HOST"),
+            "PORT": os.environ.get("SQL_PORT"),
+        }
+    }
+
+else:
+
+    # Redis settings
+
+    REDIS_URL = 'redis://localhost:6379/0'
+
 
 # Channels settings
 
@@ -170,5 +219,12 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [REDIS_URL],
         }
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': REDIS_URL,
     }
 }
