@@ -10,8 +10,6 @@ class IndexPageView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["room_list"] = cache.get("room_list")
         
-        print("Current rooms: ", cache.get('room_list'))
-        
         return context
 
 class RoomTemplateView(TemplateView):

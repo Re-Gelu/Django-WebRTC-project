@@ -1,7 +1,5 @@
-from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync, sync_to_async
 import json
-from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.core.cache import cache
