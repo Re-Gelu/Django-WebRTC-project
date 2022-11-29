@@ -1,14 +1,20 @@
+from channels.layers import get_channel_layer
 from django.shortcuts import render
 from django.views.generic.base import TemplateView
-from django.utils.safestring import mark_safe
-import json
-
+from django.core.cache import cache
 
 class IndexPageView(TemplateView):
     """ Index page class view """
 
     template_name = "index.html"
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["room_list"] = cache.get("room_list")
+        
+        print("Current rooms: ", cache.get('room_list'))
+        
+        return context
 
 class RoomTemplateView(TemplateView):
     """ Room template class view """
@@ -18,4 +24,5 @@ class RoomTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["room_name"] = kwargs.get('room_name')
+        
         return context

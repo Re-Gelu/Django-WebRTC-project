@@ -8,17 +8,37 @@
 
 {% block content %}
     <div class="container mt-3">
-        <div class=" a-important lead">Input the name of the room to connect</div>
-        <div class="row col-6 col-md-4 mt-3">
-            <div class="input-group">
-                <input id="user-name-input" class="form-control" type="text" placeholder="username" aria-label="username">
+        <div class="row">
+
+            <!-- Connect inputs -->
+            <div class="col-12 col-md-6">
+                <div class=" a-important lead">Input the name of the room to connect</div>
+                <div class=" mt-3">
+                    <div class="input-group">
+                        <input id="user-name-input" class="form-control" type="text" placeholder="Username" aria-label="username">
+                    </div>
+                </div>
+                <div class="input-group mt-3">
+                    <button id="room-name-submit" class="btn btn-outline-success" type="button">Connect</button>
+                    <input id="room-name-input" type="text" class="form-control" placeholder="Room name" aria-label="Room name" aria-describedby="room-name-submit" size="100">
+                </div>
             </div>
-        </div>
-        <div class="row col-4">
-            <div class="input-group mt-3">
-                <button id="room-name-submit" class="btn btn-outline-success" type="button">Connect</button>
-                <input id="room-name-input" type="text" class="form-control" placeholder="room name" aria-label="Room name" aria-describedby="room-name-submit" size="100">
-            </div>
+
+            <!-- Rooms list -->
+            <div class="col-12 col-md-6">
+                <div class=" a-important lead">List of the rooms</div>
+                <ul class="list-group mt-3">
+                    {% for room_name, value in room_list.items %}
+                        <li class="list-group-item a-important">
+                            <i class="bi bi-caret-right me-2"></i>
+                            Room: {{room_name}}
+                            <span class="ms-4" >{{value.users_amount}}/2</span>
+                            <a class="float-end text-reset uk-button-text" href="/chat/{{room_name}}/">Connect</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>  
+
         </div>
     </div>
 

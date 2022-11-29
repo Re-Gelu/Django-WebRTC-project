@@ -5,7 +5,7 @@ from .views import *
 urlpatterns = [
     path(
         '',
-        TemplateView.as_view(template_name="index.html"),
+        IndexPageView.as_view(),
         name='index'
     ),
     path(
