@@ -1,5 +1,3 @@
-from channels.layers import get_channel_layer
-from django.shortcuts import render
 from django.views.generic.base import TemplateView
 from django.core.cache import cache
 
