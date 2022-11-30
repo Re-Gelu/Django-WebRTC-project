@@ -25,18 +25,22 @@
             </div>
 
             <!-- Rooms list -->
-            <div class="col-12 col-md-6">
-                <div class=" a-important lead">List of the rooms</div>
-                <ul class="list-group mt-3">
-                    {% for room_name, value in room_list.items %}
-                        <li class="list-group-item a-important">
-                            <i class="bi bi-caret-right me-2"></i>
-                            Room: {{room_name}}
-                            <span class="ms-4" >{{value.users_amount}}/2</span>
-                            <a class="float-end text-reset uk-button-text" link="/chat/{{room_name}}/" id="room-connect-submit" >Connect</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+            <div class="col-12 col-md-6 mt-4 mt-md-0">
+                {% if room_list %}
+                    <div class=" a-important lead">List of the rooms</div>
+                    <ul class="list-group mt-3">
+                        {% for room_name, value in room_list.items %}
+                            <li class="list-group-item a-important">
+                                <i class="bi bi-caret-right me-2"></i>
+                                Room: {{room_name}}
+                                <span class="ms-4" >{{value.users_amount}}/2</span>
+                                <a class="float-end text-reset uk-button-text" link="/chat/{{room_name}}/" id="room-connect-submit" >Connect</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class=" a-important lead">No created rooms for now...</div>
+                {% endif %}
             </div>  
 
         </div>
