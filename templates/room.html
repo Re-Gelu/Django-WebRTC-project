@@ -40,13 +40,16 @@
                             <select id="camera-select-input" class="form-select form-select-sm"></select>
                         </div>
                         <div class="my-3">
-                            <button class="btn btn-primary border-dark" id="startButton">
+                            <button class="btn btn-primary border-dark" id="startButton" 
+                            uk-tooltip="title: Enable your camera; delay: 300">
                                 <i class="bi bi-webcam fs-4"></i>
                             </button>
-                            <button class="btn btn-success border-dark ms-2" id="callButton">
+                            <button class="btn btn-success border-dark ms-2" id="callButton" 
+                            uk-tooltip="title: Start call; delay: 300">
                                 <i class="bi bi-telephone-outbound fs-4"></i>
                             </button>
-                            <button class="btn btn-danger border-dark ms-2" id="hangupButton">
+                            <button class="btn btn-danger border-dark ms-2" id="hangupButton"
+                            uk-tooltip="title: Hangup; delay: 300">
                                 <i class="bi bi-telephone-x-fill fs-4"></i>
                             </button>
                         </div>

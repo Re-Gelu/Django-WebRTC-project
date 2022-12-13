@@ -264,7 +264,7 @@ function callAction() {
     }
     catch (error) {
         console.log("Something went wrong. Info: " + error)
-        alert("Something went wrong...")
+        alert("The call should be made by your interlocutor...")
     }
 
     if (isConnectionSuccess) {
