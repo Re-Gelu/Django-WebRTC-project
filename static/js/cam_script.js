@@ -286,6 +286,3 @@ function hangupAction() {
 startButton.addEventListener('click', startAction);
 callButton.addEventListener('click', callAction);
 hangupButton.addEventListener('click', hangupAction);
-    
-
-/* const foo = () => {}; */
