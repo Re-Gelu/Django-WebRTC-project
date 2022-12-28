@@ -238,7 +238,8 @@ function getCameras() {
             console.log(err.name + ": " + err.message);
         });
 }
-
+/* 
+fgerp0wognuewpng0pibeunrg8ierwgb */
 
 
 /* DEFINE AND ADD BEHAVIOR TO BUTTONS. */
