@@ -5,7 +5,7 @@ services:
   web:
     build:
       context: ./
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     command: >
       sh -c "python manage.py createcachetable
              python manage.py migrate --noinput
