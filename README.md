@@ -11,9 +11,9 @@
 
 ## :whale: Работа с Docker
 
-- Поднять Prod контейнер
+- Поднять контейнер (prod/dev - .env)
   ```
-  $ docker-compose -f docker-compose.prod.yml up -d --build
+  $ docker-compose -f docker-compose.yml up -d --build
   ```
   
 - Удаление контейнеров
