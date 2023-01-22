@@ -2,7 +2,7 @@
 > Pet-проект. Создается в целях более лучшего изучения Django :shipit:
 
 ## :triangular_ruler: Стек проекта: 
-- Python, Django, Django channels
+- Python 3.11 (Django, Django channels)
 - HTML5, CSS (Bootstrap 5, UIkit), JS
 - NGNIX, Daphne
 - Redis (v5.0.9 Важно!)
