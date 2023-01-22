@@ -175,6 +175,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = ["127.0.0.1", ]
 
+# Redis settings
+
+REDIS_URL = 'redis://localhost:6379/0'
+
 # Prod settings
 
 if os.environ.get("DEBUG") == '0':
@@ -203,12 +207,6 @@ if os.environ.get("DEBUG") == '0':
             "PORT": os.environ.get("SQL_PORT"),
         }
     }
-
-else:
-
-    # Redis settings
-
-    REDIS_URL = 'redis://localhost:6379/0'
 
 
 # Channels settings
