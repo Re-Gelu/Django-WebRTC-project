@@ -11,15 +11,14 @@
 
 ## :whale: Работа с Docker
 
-- Удаление контейнеров
-
-  ```
-  $ docker-compose down -v
-  ```
-
 - Поднять Prod контейнер
   ```
   $ docker-compose -f docker-compose.prod.yml up -d --build
+  ```
+  
+- Удаление контейнеров
+  ```
+  $ docker-compose down -v
   ```
   
 ## :camera: Скрины проекта
