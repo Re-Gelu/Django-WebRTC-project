@@ -9,6 +9,29 @@
 
 ## :package: [Зависимости проекта](https://github.com/Re-Gelu/Django-WebRTC-project/blob/master/requirements.txt)
 
+## :wrench: Запуск проекта
+
+- Создаём виртуальное окружение Python и активируем его
+
+  ```
+  $ python -m venv venv
+  $ venv\Scripts\activate.bat - для Windows / source venv/bin/activate - для Linux и MacOS
+  ```
+
+- Устанавливаем зависимости проекта
+
+  ```
+  $ pip install -r requirements.txt
+  ```
+  
+- Обычный запуск (произойдет через Daphne)
+
+  ```
+  $ python manage.py runserver
+  ``` 
+  
+> И определенно стоит настроить .env файл перед запуском
+
 ## :whale: Работа с Docker
 
 - Поднять контейнер (prod/dev - .env)
