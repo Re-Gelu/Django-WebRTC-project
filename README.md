@@ -3,7 +3,7 @@
 
 ## :triangular_ruler: Стек проекта: 
 - Python 3.11 (Django, Django channels)
-- HTML5, CSS (Bootstrap 5, UIkit), JS
+- HTML5, CSS (Bootstrap 5, UIkit), JS (jQuery)
 - NGNIX, Daphne
 - Redis (v5.0.9 Важно!)
 
